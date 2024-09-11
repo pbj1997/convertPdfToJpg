@@ -2,4 +2,3 @@ streamlit
 pdf2image
 Pillow
 poppler-utils
-poppler
