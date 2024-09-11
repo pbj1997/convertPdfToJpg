@@ -38,20 +38,9 @@ if uploaded_file is not None:
             # Store image byte array for individual download
             images.append((f"page_{page_num + 1}.jpg", img_bytes))
 
-            # Display the image
-            st.image(img, caption=f'Page {page_num + 1}', use_column_width=True)
-
-            # Add a download button for each individual image
-            st.download_button(
-                label=f"Download Page {page_num + 1} as JPG",
-                data=img_bytes,
-                file_name=f"page_{page_num + 1}.jpg",
-                mime="image/jpeg"
-            )
-
     pdf_document.close()
 
-    # Step 4: Provide a download button for the ZIP file
+    # Step 4: Provide a download button for the ZIP file (at the top)
     zip_buffer.seek(0)  # Reset buffer position to the beginning
     st.download_button(
         label="Download All Pages as ZIP",
@@ -59,3 +48,17 @@ if uploaded_file is not None:
         file_name="pdf_pages.zip",
         mime="application/zip"
     )
+
+    # Step 5: Display images and provide individual download buttons
+    for i, (file_name, img_bytes) in enumerate(images):
+        # Display image in the app
+        img = Image.open(io.BytesIO(img_bytes))
+        st.image(img, caption=f'Page {i + 1}', use_column_width=True)
+
+        # Add a download button for each individual image
+        st.download_button(
+            label=f"Download Page {i + 1} as JPG",
+            data=img_bytes,
+            file_name=file_name,
+            mime="image/jpeg"
+        )
