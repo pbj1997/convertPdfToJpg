@@ -4,7 +4,7 @@ from PIL import Image
 import io
 
 # Title of the web app
-st.title('PDF to JPG Converter (Using PyMuPDF)')
+st.title('PDF to JPG Converter')
 
 # Step 1: File uploader to allow users to upload a PDF
 uploaded_file = st.file_uploader("Upload PDF", type="pdf")
