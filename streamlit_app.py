@@ -17,21 +17,37 @@ if uploaded_file is not None:
 
     st.success(f'PDF loaded. Number of pages: {num_pages}')
 
-    # Step 3: Collect images and add them to a ZIP file
+    # Step 3: Collect images for individual downloads and add them to a ZIP file
     zip_buffer = io.BytesIO()  # In-memory buffer to store the ZIP file
+    images = []  # To store each image for individual downloads
+
     with zipfile.ZipFile(zip_buffer, "w") as zip_file:
         for page_num in range(num_pages):
             page = pdf_document.load_page(page_num)  # Get each page
             pix = page.get_pixmap()  # Convert page to image
             img = Image.open(io.BytesIO(pix.tobytes("png")))  # Convert image to Pillow Image format
 
-            # Convert image to bytes for storing in ZIP
+            # Save image to byte array for both ZIP and individual download
             img_byte_arr = io.BytesIO()
             img.save(img_byte_arr, format='JPEG')
-            img_byte_arr = img_byte_arr.getvalue()
+            img_bytes = img_byte_arr.getvalue()
 
             # Add the image to the ZIP file
-            zip_file.writestr(f"page_{page_num + 1}.jpg", img_byte_arr)
+            zip_file.writestr(f"page_{page_num + 1}.jpg", img_bytes)
+
+            # Store image byte array for individual download
+            images.append((f"page_{page_num + 1}.jpg", img_bytes))
+
+            # Display the image
+            st.image(img, caption=f'Page {page_num + 1}', use_column_width=True)
+
+            # Add a download button for each individual image
+            st.download_button(
+                label=f"Download Page {page_num + 1} as JPG",
+                data=img_bytes,
+                file_name=f"page_{page_num + 1}.jpg",
+                mime="image/jpeg"
+            )
 
     pdf_document.close()
 
